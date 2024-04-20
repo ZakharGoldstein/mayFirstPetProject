@@ -1,2 +1,81 @@
 # Auto detect text files and perform LF normalization
-* text=auto
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+
+class MyCalculatorApp(App):
+    FirstGlobalVariable = ''
+    SecondGlobalVariable = 0
+    ThirdGlobalVariable = 0
+
+    def build(self):
+        # Boxes
+        mainLayout = BoxLayout(orientation='vertical')
+        mainCalaculusLabel = Label(text='', font_size='100sp')
+        mainButtonsSpace = GridLayout(cols=5, rows=6)
+
+        #Button for clear Lable and Variables
+        def Clear(instance):
+            self.FirstGlobalVariable=''
+            self.SecondGlobalVariable=0
+            self.ThirdGlobalVariable=0
+            mainCalaculusLabel.text=''
+
+        # Function of reading label
+        def readLabel():
+            print(self.FirstGlobalVariable, self.SecondGlobalVariable, self.ThirdGlobalVariable)
+            if mainCalaculusLabel.text in '+-*/':
+                self.FirstGlobalVariable = mainCalaculusLabel.text
+            elif self.FirstGlobalVariable == '':
+                self.SecondGlobalVariable = int(mainCalaculusLabel.text)
+            else:
+                self.ThirdGlobalVariable = int(mainCalaculusLabel.text)
+
+        # Function of change Label for '*' '/' '+' '-' symbols
+        def add(instance):
+            mainCalaculusLabel.text = str(instance.text)
+            readLabel()
+            mainCalaculusLabel.text = ''
+
+        # Function for making number and change label
+        def for_make_number(instance):
+            mainCalaculusLabel.text = mainCalaculusLabel.text + str(instance.text)
+            readLabel()
+
+        #Final Function output
+        def calculus(instance):
+            if self.FirstGlobalVariable == '+':
+                mainCalaculusLabel.text = str(self.SecondGlobalVariable + self.ThirdGlobalVariable)
+            elif self.FirstGlobalVariable == '-':
+                mainCalaculusLabel.text = str(self.SecondGlobalVariable - self.ThirdGlobalVariable)
+            elif self.FirstGlobalVariable == '*':
+                mainCalaculusLabel.text = str(self.SecondGlobalVariable * self.ThirdGlobalVariable)
+            elif self.FirstGlobalVariable == '/':
+                if self.ThirdGlobalVariable != 0:
+                    result = self.SecondGlobalVariable / self.ThirdGlobalVariable
+                    mainCalaculusLabel.text = str(int(result) if result.is_integer() else result)
+                else:
+                    mainCalaculusLabel.text = "Error: Division by zero"
+
+        # Append gridlayout 10 buttons
+        for i in range(10):
+            mainButtonsSpace.add_widget(Button(text=f'{i}', font_size='25sp', on_press=for_make_number))
+
+        # Append gridLayout '*' '/' '+' '-' 'let's do this' 'clear'
+        mainButtonsSpace.add_widget(Button(text='*', font_size='20sp', on_press=add))
+        mainButtonsSpace.add_widget(Button(text='/', font_size='20sp', on_press=add))
+        mainButtonsSpace.add_widget(Button(text='+', font_size='20sp', on_press=add))
+        mainButtonsSpace.add_widget(Button(text='-', font_size='20sp', on_press=add))
+        mainButtonsSpace.add_widget(Button(text="let's do this", font_size='20sp', on_press=calculus))
+        mainButtonsSpace.add_widget(Button(text='Clear', font_size='25sp', on_press=Clear))
+
+        # Add Widgets
+        mainLayout.add_widget(mainCalaculusLabel)
+        mainLayout.add_widget(mainButtonsSpace)
+
+        return mainLayout
+
+if __name__ == "__main__":
+    MyCalculatorApp().run()
