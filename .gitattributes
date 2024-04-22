@@ -26,7 +26,11 @@ class MyCalculatorApp(App):
         # Function of reading label
         def readLabel():
             print(self.FirstGlobalVariable, self.SecondGlobalVariable, self.ThirdGlobalVariable)
-            if mainCalaculusLabel.text in '+-*/':
+            if mainCalaculusLabel.text=="Error: Division by zero":
+                self.FirstGlobalVariable = ''
+                self.SecondGlobalVariable = 0
+                self.ThirdGlobalVariable = 0
+            elif mainCalaculusLabel.text in '+-*/':
                 self.FirstGlobalVariable = mainCalaculusLabel.text
             elif self.FirstGlobalVariable == '':
                 self.SecondGlobalVariable = int(mainCalaculusLabel.text)
@@ -41,23 +45,37 @@ class MyCalculatorApp(App):
 
         # Function for making number and change label
         def for_make_number(instance):
-            mainCalaculusLabel.text = mainCalaculusLabel.text + str(instance.text)
-            readLabel()
+            if mainCalaculusLabel.text=="Error: Division by zero":
+                mainCalaculusLabel.text= str(instance.text)
+                readLabel()
+            else:
+                mainCalaculusLabel.text = mainCalaculusLabel.text + str(instance.text)
+                readLabel()
 
         #Final Function output
         def calculus(instance):
             if self.FirstGlobalVariable == '+':
                 mainCalaculusLabel.text = str(self.SecondGlobalVariable + self.ThirdGlobalVariable)
+                self.FirstGlobalVariable=''
+                self.SecondGlobalVariable=float(mainCalaculusLabel.text)
             elif self.FirstGlobalVariable == '-':
                 mainCalaculusLabel.text = str(self.SecondGlobalVariable - self.ThirdGlobalVariable)
+                self.FirstGlobalVariable=''
+                self.SecondGlobalVariable = float(mainCalaculusLabel.text)
             elif self.FirstGlobalVariable == '*':
                 mainCalaculusLabel.text = str(self.SecondGlobalVariable * self.ThirdGlobalVariable)
+                self.FirstGlobalVariable=''
+                self.SecondGlobalVariable = float(mainCalaculusLabel.text)
             elif self.FirstGlobalVariable == '/':
                 if self.ThirdGlobalVariable != 0:
                     result = self.SecondGlobalVariable / self.ThirdGlobalVariable
-                    mainCalaculusLabel.text = str(int(result) if result.is_integer() else result)
+                    mainCalaculusLabel.text = str(float(result) if result.is_integer() else result)
+                    self.FirstGlobalVariable=''
+                    self.SecondGlobalVariable = float(mainCalaculusLabel.text)
                 else:
                     mainCalaculusLabel.text = "Error: Division by zero"
+                    self.FirstGlobalVariable=''
+
 
         # Append gridlayout 10 buttons
         for i in range(10):
